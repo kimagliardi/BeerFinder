@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BeerFinder</string>
+    <string name="google_maps_API_key">AIzaSyCvxETIZTZRORftmPCVb9bFWACb49u5H_Y</string>
+</resources>
