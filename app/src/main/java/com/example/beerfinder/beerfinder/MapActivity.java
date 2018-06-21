@@ -25,15 +25,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     @Override
-    public void onMapReady(GoogleMap googleMap){
+    public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is ready", Toast.LENGTH_SHORT).show();
         mMap = googleMap;
-        if(mLocationPermissionsGranted){
+        if (mLocationPermissionsGranted) {
             getDeviceLocation();
-
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mMap.setMyLocationEnabled(true);
 
         }
     }
