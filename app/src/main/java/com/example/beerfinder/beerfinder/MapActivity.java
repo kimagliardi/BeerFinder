@@ -32,6 +32,7 @@ import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
@@ -75,7 +76,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
     private static final LatLngBounds LAT_LNG_BOUNDS = new LatLngBounds(
-            new LatLng(-40, -168), new LatLng(71, 136));
+            new LatLng(-30, -51), new LatLng(-30, -51));
 
     //variáveis
     private Boolean mLocationPermissionsGranted = false;
@@ -86,6 +87,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private PlaceInfo mPlace;
     private Marker mMarker;
     private static final int PLACE_PIKER_REQUEST = 1;
+
+
+
+
     //widg
     private ImageView mGps, mInfo, mPlacePiker;
     private AutoCompleteTextView mSearchText;
@@ -95,7 +100,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +113,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
     }
+
     private void init(){
         Log.d(TAG, "init: initializing");
 
@@ -185,6 +190,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+       // issue aberta sobre o place piker.. para selecionar o tipo de retorno
+        //https://issuetracker.google.com/issues/35826944
+
+
         if (requestCode == PLACE_PIKER_REQUEST) {
             if (resultCode == RESULT_OK) {
                 Place place = PlacePicker.getPlace(this, data);
@@ -264,10 +273,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapActivity.this));
         if(placeInfo != null){
             try{
-                String snippet  = "Address: " + placeInfo.getAddress() + "\n" +
-                        "Phone: " + placeInfo.getPhoneNumber() + "\n" +
-                        "WebSite: " + placeInfo.getWebsiteUri() + "\n" +
-                        "Preço: " + placeInfo.getRating() + "\n";
+
+                String snippet  = "Endereço: " + placeInfo.getAddress() + "\n" +
+                        "Telefone: " + placeInfo.getPhoneNumber() + "\n" +
+                        "Site: " + placeInfo.getWebsiteUri() + "\n" +
+                        "Rating: " + placeInfo.getRating() + "\n";
 
                         MarkerOptions options = new MarkerOptions()
                                 .position(latLng)

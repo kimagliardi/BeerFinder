@@ -69,9 +69,8 @@
         android:id="@+id/place_info"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/relLayout1"
-        android:layout_marginTop="82dp"
+        android:layout_alignTop="@+id/ic_gps"
         android:scaleType="centerCrop"
         android:src="@drawable/icon_info" />
 

@@ -35,6 +35,7 @@ import com.google.android.gms.common.data.DataBufferUtils;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.AutocompletePredictionBuffer;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLngBounds;
 
@@ -52,6 +53,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlaceAutocompleteAdapter
         extends ArrayAdapter<AutocompletePrediction> implements Filterable {
+
+
+    private AutocompleteFilter filterC;
 
     private static final String TAG = "PlaceAutoCompleteAd";
     private static final CharacterStyle STYLE_BOLD = new StyleSpan(Typeface.BOLD);
@@ -84,9 +88,12 @@ public class PlaceAutocompleteAdapter
                                     LatLngBounds bounds, AutocompleteFilter filter) {
         super(context, android.R.layout.simple_expandable_list_item_2, android.R.id.text1);
         mGoogleApiClient = googleApiClient;
+        filter = new AutocompleteFilter.Builder().setTypeFilter(Place.TYPE_BAR).build();
+        mPlaceFilter = filterC;
         mBounds = bounds;
-        mPlaceFilter = filter;
+
     }
+
 
     /**
      * Sets the bounds for all subsequent queries.
@@ -139,6 +146,7 @@ public class PlaceAutocompleteAdapter
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
 
+
                 // We need a separate list to store the results, since
                 // this is run asynchronously.
                 ArrayList<AutocompletePrediction> filterData = new ArrayList<>();
@@ -185,21 +193,6 @@ public class PlaceAutocompleteAdapter
         };
     }
 
-    /**
-     * Submits an autocomplete query to the Places Geo Data Autocomplete API.
-     * Results are returned as frozen AutocompletePrediction objects, ready to be cached.
-     * objects to store the Place ID and description that the API returns.
-     * Returns an empty list if no results were found.
-     * Returns null if the API client is not available or the query did not complete
-     * successfully.
-     * This method MUST be called off the main UI thread, as it will block until data is returned
-     * from the API, which may include a network request.
-     *
-     * @param constraint Autocomplete query string
-     * @return Results from the autocomplete API or null if the query was not successful.
-     * @see Places#GEO_DATA_API#getAutocomplete(CharSequence)
-     * @see AutocompletePrediction#freeze()
-     */
     private ArrayList<AutocompletePrediction> getAutocomplete(CharSequence constraint) {
         if (mGoogleApiClient.isConnected()) {
             Log.i(TAG, "Starting autocomplete query for: " + constraint);
