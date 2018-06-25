@@ -1,6 +1,7 @@
 package com.example.beerfinder.beerfinder;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -24,6 +25,8 @@ import android.widget.Toast;
 
 import com.example.beerfinder.beerfinder.models.PlaceInfo;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -33,6 +36,7 @@ import com.google.android.gms.location.places.AutocompletePrediction;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -81,8 +85,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private PlaceInfo mPlace;
     private Marker mMarker;
+    private static final int PLACE_PIKER_REQUEST = 1;
     //widg
-    private ImageView mGps, mInfo;
+    private ImageView mGps, mInfo, mPlacePiker;
     private AutoCompleteTextView mSearchText;
 
 
@@ -99,6 +104,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         getLocationPermission();
         mSearchText = (AutoCompleteTextView) findViewById(R.id.input_search);
         mGps = (ImageView) findViewById(R.id.ic_gps);
+        mPlacePiker = (ImageView) findViewById(R.id.place_picker);
         mInfo = (ImageView) findViewById(R.id.place_info);
 
 
@@ -114,7 +120,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 .build();
 
 
-        mSearchText.setOnItemClickListener(mAutoCompleteClickListener);
+        mSearchText.setOnItemClickListener(mAutocompleteClickListener);
 
         mPlaceAutocompleteAdapter = new PlaceAutocompleteAdapter(this, mGoogleApiClient,
                                                              LAT_LNG_BOUNDS, null);
@@ -160,8 +166,33 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         });
+        mPlacePiker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try{
+                    startActivityForResult(builder.build(MapActivity.this), PLACE_PIKER_REQUEST);
+                }catch(GooglePlayServicesNotAvailableException e){
+                    e.printStackTrace();
+                }catch (GooglePlayServicesRepairableException e){
+                    e.printStackTrace();
+                }
+            }
+        });
         hideSoftKeyboard();
+    }
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PIKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(this, data);
+                PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                        .getPlaceById(mGoogleApiClient, place.getId());
+                placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+            }
+        }
     }
 
 
@@ -229,6 +260,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
         mMap.clear();
+
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapActivity.this));
         if(placeInfo != null){
             try{
                 String snippet  = "Address: " + placeInfo.getAddress() + "\n" +
@@ -320,16 +353,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
 
-    private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int i, long id) {
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             hideSoftKeyboard();
-            final AutocompletePrediction  item = mPlaceAutocompleteAdapter.getItem(i);
-            final String placeID = item.getPlaceId();
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeID);
+
+            final AutocompletePrediction item = mPlaceAutocompleteAdapter.getItem(i);
+            final String placeId = item.getPlaceId();
+
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
         }
     };
+
+
             private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>(){
                 @Override
                 public void onResult(@NonNull PlaceBuffer places){
