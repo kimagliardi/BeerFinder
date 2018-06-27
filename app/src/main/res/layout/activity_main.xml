@@ -8,10 +8,9 @@
 
     <Button
         android:id="@+id/btnMap"
-        android:layout_width="147dp"
-        android:layout_height="77dp"
+        android:layout_width="149dp"
+        android:layout_height="84dp"
         android:text="Permissões"
-        tools:layout_editor_absoluteX="119dp"
-        tools:layout_editor_absoluteY="196dp" />
-
+        tools:layout_editor_absoluteX="118dp"
+        tools:layout_editor_absoluteY="213dp" />
 </android.support.constraint.ConstraintLayout>

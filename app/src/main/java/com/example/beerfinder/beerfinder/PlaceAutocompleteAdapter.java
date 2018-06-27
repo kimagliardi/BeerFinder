@@ -42,15 +42,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Adapter that handles Autocomplete requests from the Places Geo Data API.
- * {@link AutocompletePrediction} results from the API are frozen and stored directly in this
- * adapter. (See {@link AutocompletePrediction#freeze()}.)
- * <p>
- * Note that this adapter requires a valid {@link com.google.android.gms.common.api.GoogleApiClient}.
- * The API client must be maintained in the encapsulating Activity, including all lifecycle and
- * connection states. The API client must be connected with the {@link Places#GEO_DATA_API} API.
- */
 public class PlaceAutocompleteAdapter
         extends ArrayAdapter<AutocompletePrediction> implements Filterable {
 
@@ -102,17 +93,13 @@ public class PlaceAutocompleteAdapter
         mBounds = bounds;
     }
 
-    /**
-     * Returns the number of results received in the last autocomplete query.
-     */
+
     @Override
     public int getCount() {
         return mResultList.size();
     }
 
-    /**
-     * Returns an item from the last autocomplete query.
-     */
+
     @Override
     public AutocompletePrediction getItem(int position) {
         return mResultList.get(position);
@@ -121,10 +108,6 @@ public class PlaceAutocompleteAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = super.getView(position, convertView, parent);
-
-        // Sets the primary and secondary text for a row.
-        // Note that getPrimaryText() and getSecondaryText() return a CharSequence that may contain
-        // styling based on the given CharacterStyle.
 
         AutocompletePrediction item = getItem(position);
 

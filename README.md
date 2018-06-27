@@ -18,5 +18,7 @@ Algumas capturas de tela
 
 Algumas funcionalidades ainda devem ser corrigidas, como a procura do **NearBy** (ultima tela), não entendi muito bem como fazer, mas vi que na existe uma issue aberta pela comunidade com um feature request para a classificação de locais [aqui](https://issuetracker.google.com/issues/35826944)
 
-Apesar do trabalho ter sido parcialmente realizado, achei a atividade muito interessante, pois nunca havia trabalhado tanto com API's e com aplicações para Android, fato que me deixou motivado a realizar novos experimentos após a conclusão do semestre :D
+Um pequeno vídeo de demonstração pode ser acessado [aqui](prints/demo.webm)
 
+
+Apesar do trabalho ter sido parcialmente realizado, achei a atividade muito interessante, pois nunca havia trabalhado tanto com API's e com aplicações para Android, fato que me deixou motivado a realizar novos experimentos após a conclusão do semestre :D
